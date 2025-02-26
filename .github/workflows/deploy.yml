@@ -40,6 +40,10 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
+      - name: Download ECS Task Definition
+        run: |
+          aws ecs describe-task-definition --task-definition web-task --query taskDefinition > ecs-task-definition.json
+
       - name: Update ECS Task Definition
         run: |
           TASK_DEFINITION_ARN=$(aws ecs describe-task-definition --task-definition web-task --query "taskDefinition.taskDefinitionArn" --output text)
