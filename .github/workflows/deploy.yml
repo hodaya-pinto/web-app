@@ -51,7 +51,7 @@ jobs:
       - name: Update ECS Task Definition
         run: |
           jq --arg IMAGE "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" \
-            '.containerDefinitions[0].image=$IMAGE' ecs-task-definition.json > updated-task-def.json
+            '.containerDefinitions[0].image=$IMAGE' cleaned-task-def.json > updated-task-def.json
 
           aws ecs register-task-definition --cli-input-json file://updated-task-def.json
 
