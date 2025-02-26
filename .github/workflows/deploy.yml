@@ -57,4 +57,4 @@ jobs:
 
       - name: Deploy New Task Definition to ECS Service
         run: |
-          aws ecs update-service --cluster WebCluster --service web-service --force-new-deployment
+          aws ecs update-service --cluster WebCluster --service web-service --force-new-deployment 
