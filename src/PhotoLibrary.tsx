@@ -68,7 +68,7 @@ export default function PhotoLibrary() {
             placeholder="Search photo by name"
             className="search-input"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)} // Update search query on input change
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
       </div>
