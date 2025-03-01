@@ -71,7 +71,7 @@ export default function PhotoLibrary() {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-      </div> 
+      </div>
 
       <div className="image-grid-wrapper">
         <div className="image-grid">
