@@ -49,7 +49,6 @@ export default function PhotoLibrary() {
     fileInput?.click();
   };
 
-  // Filter images by search query, matching the name of the image
   const filteredImages = images.filter((image) =>
     image.name.toLowerCase().includes(searchQuery.toLowerCase()) // Search by image name
   );
