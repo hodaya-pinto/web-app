@@ -55,7 +55,7 @@ export default function PhotoLibrary() {
 
   return (
     <div className="container">
-      {/* Dropzone container */}
+      {/* Dropzone container  */}
       <div className="dropzone-container">
         <input {...getInputProps()} data-testid="file-input"/>
         <button className="upload-button" data-testid="upload-button" onClick={handleButtonClick}>
@@ -68,10 +68,10 @@ export default function PhotoLibrary() {
             placeholder="Search photo by name"
             className="search-input"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)} // Update search query on input change
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-      </div>
+      </div> 
 
       <div className="image-grid-wrapper">
         <div className="image-grid">
