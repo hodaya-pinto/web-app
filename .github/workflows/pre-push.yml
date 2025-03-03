@@ -7,12 +7,14 @@ on:
   pull_request:
     branches:
       - development
+      - main
   workflow_dispatch:
   
 
 jobs:
   test:
     name: test
+    id: test
     runs-on: ubuntu-latest
     permissions:
       pull-requests: read
@@ -32,6 +34,7 @@ jobs:
         run: npm install
 
       - name: Run Tests
+        id: run_test
         run: |
           npm run test
           TEST_EXIT_CODE=$?
