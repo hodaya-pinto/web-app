@@ -32,7 +32,7 @@ export default function PhotoLibrary() {
       type: file.type,
     }));
   
-    setImages((prev) => [...prev, ...newImages]); 
+    setImages((prev) => [...prev, ...newImages]);
   };
 
   const { getInputProps } = useDropzone({
