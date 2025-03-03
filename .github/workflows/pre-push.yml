@@ -7,12 +7,17 @@ on:
   pull_request:
     branches:
       - development
-  workflow_dispatch:
+      - main
   
 
 jobs:
   test:
+    name: test
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+      contents: read
+      checks: write
 
     steps:
       - name: Checkout Repository
@@ -27,5 +32,11 @@ jobs:
         run: npm install
 
       - name: Run Tests
-        run: npm test
+        id: run_test
+        run: |
+          npm run test
+          TEST_EXIT_CODE=$?
 
+          if [ $TEST_EXIT_CODE -ne 0 ]; then
+            exit 1
+          fi
