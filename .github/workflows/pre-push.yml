@@ -7,13 +7,12 @@ on:
   pull_request:
     branches:
       - development
-  workflow_dispatch:
+      - main
   
 
 jobs:
   test:
     name: test
-    id: test
     runs-on: ubuntu-latest
     permissions:
       pull-requests: read
