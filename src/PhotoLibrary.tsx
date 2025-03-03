@@ -19,7 +19,7 @@ export default function PhotoLibrary() {
   const [visibleImages, setVisibleImages] = useState<number>(12);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
-  const onDrop = (acceptedFiles: File[]) => {
+  const onDrop = (acceptedFiles: File[]) => { 
     const newImages = acceptedFiles.map((file) => ({
       file,
       preview: URL.createObjectURL(file),
