@@ -56,7 +56,7 @@ export default function PhotoLibrary() {
   return (
     <div className="container">
       {/* Dropzone container */}
-      <div className="dropzone-container">
+      <div className="dropzone-container"> 
         <input {...getInputProps()} data-testid="file-input"/>
         <button className="upload-button" data-testid="upload-button" onClick={handleButtonClick}>
           +
