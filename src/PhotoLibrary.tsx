@@ -61,7 +61,7 @@ export default function PhotoLibrary() {
         <button className="upload-button" data-testid="upload-button" onClick={handleButtonClick}>
           +
         </button>
-        <div className="search-container">
+        <div className="search-container"> 
           <div className="search-icon">🔍</div>
           <input
             type="text"
