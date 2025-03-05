@@ -19,21 +19,41 @@ export default function PhotoLibrary() {
   const [visibleImages, setVisibleImages] = useState<number>(12);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
-  const onDrop = (acceptedFiles: File[]) => { 
-    const newImages = acceptedFiles.map((file) => ({
-      file,
-      preview: URL.createObjectURL(file),
-      title: "",
-      description: "",
-      lastModified: file.lastModified,
-      lastModifiedDate: new Date(file.lastModified),
-      name: file.name,
-      size: file.size,
-      type: file.type,
-    }));
+  const onDrop = (acceptedFiles: File[]) => {
+    acceptedFiles.forEach(async (file) => {
+      const formData = new FormData();
+      formData.append("file", file);
   
-    setImages((prev) => [...prev, ...newImages]); 
-  };
+      try {
+        const response = await fetch("http://localhost:5000/upload", {
+          method: "POST",
+          body: formData,
+        });
+  
+        const result = await response.json();
+        if (response.ok) {
+          setImages((prev) => [
+            ...prev,
+            {
+              file,
+              preview: result.url, // Use S3 URL
+              title: "",
+              description: "",
+              lastModified: file.lastModified,
+              lastModifiedDate: new Date(file.lastModified),
+              name: file.name,
+              size: file.size,
+              type: file.type,
+            },
+          ]);
+        } else {
+          console.error("Upload failed:", result.error);
+        }
+      } catch (error) {
+        console.error("Error uploading file:", error);
+      }
+    });
+  };  
 
   const { getInputProps } = useDropzone({
     onDrop,
