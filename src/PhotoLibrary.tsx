@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 
 // Custom type for images with additional details
@@ -19,20 +19,72 @@ export default function PhotoLibrary() {
   const [visibleImages, setVisibleImages] = useState<number>(12);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/get-images");
+        const result = await response.json();
+        if (response.ok) {
+          setImages([])
+          setImages((prev) => [
+            ...prev,
+            ...result.images.map((url: string) => ({
+              file: { name: url.split("/").pop()!, size: 0, type: "" } as File,
+              preview: url,
+              title: "",
+              description: "",
+              lastModified: 0,
+              lastModifiedDate: new Date(),
+              name: url.split("/").pop()!,
+              size: 0,
+              type: "",
+            })),
+          ]);
+        } else {
+          console.error("Error fetching images:", result.error);
+        }
+      } catch (error) {
+        console.error("Error fetching images:", error);
+      }
+    };
+
+    fetchImages();
+  }, []);
+
   const onDrop = (acceptedFiles: File[]) => {
-    const newImages = acceptedFiles.map((file) => ({
-      file,
-      preview: URL.createObjectURL(file),
-      title: "",
-      description: "",
-      lastModified: file.lastModified,
-      lastModifiedDate: new Date(file.lastModified),
-      name: file.name,
-      size: file.size,
-      type: file.type,
-    }));
+    acceptedFiles.forEach(async (file) => {
+      const formData = new FormData();
+      formData.append("file", file);
   
-    setImages((prev) => [...prev, ...newImages]); 
+      try {
+        const response = await fetch("http://localhost:5000/upload", {
+          method: "POST",
+          body: formData,
+        });
+  
+        const result = await response.json();
+        if (response.ok) {
+          setImages((prev) => [
+            ...prev,
+            {
+              file,
+              preview: result.url, // Use S3 URL
+              title: "",
+              description: "",
+              lastModified: file.lastModified,
+              lastModifiedDate: new Date(file.lastModified),
+              name: file.name,
+              size: file.size,
+              type: file.type,
+            },
+          ]);
+        } else {
+          console.error("Upload failed:", result.error);
+        }
+      } catch (error) {
+        console.error("Error uploading file:", error);
+      }
+    });
   };
 
   const { getInputProps } = useDropzone({
