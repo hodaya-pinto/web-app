@@ -22,11 +22,7 @@ export default function PhotoLibrary() {
   useEffect(() => {
     const fetchImages = async () => {
       try {
-<<<<<<< Updated upstream
-        const response = await fetch("http://localhost:5000/get-images");
-=======
         const response = await fetch("http://3.86.183.20:5000/get-images");
->>>>>>> Stashed changes
         const result = await response.json();
         if (response.ok) {
           setImages([])
@@ -61,11 +57,7 @@ export default function PhotoLibrary() {
       formData.append("file", file);
   
       try {
-<<<<<<< Updated upstream
-        const response = await fetch("http://localhost:5000/upload", {
-=======
         const response = await fetch("http://3.86.183.20:5000/upload", {
->>>>>>> Stashed changes
           method: "POST",
           body: formData,
         }); 
