@@ -22,7 +22,7 @@ export default function PhotoLibrary() {
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const response = await fetch("http://3.86.183.20:5000/get-images");
+        const response = await fetch("http://54.210.27.59:5000/get-images");
         const result = await response.json();
         if (response.ok) {
           setImages([])
@@ -57,7 +57,7 @@ export default function PhotoLibrary() {
       formData.append("file", file);
   
       try {
-        const response = await fetch("http://3.86.183.20:5000/upload", {
+        const response = await fetch("http://54.210.27.59:5000/upload", {
           method: "POST",
           body: formData,
         }); 
