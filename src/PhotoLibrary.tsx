@@ -60,7 +60,7 @@ export default function PhotoLibrary() {
         const response = await fetch("http://localhost:5000/upload", {
           method: "POST",
           body: formData,
-        });
+        }); 
   
         const result = await response.json();
         if (response.ok) {
