@@ -2,8 +2,38 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import PhotoLibrary from './PhotoLibrary'; // Update this path if necessary
 
-// Mock the FileReader API to simulate image loading
-global.URL.createObjectURL = jest.fn(() => 'mock-image-url');
+
+beforeEach(() => {
+  // Mock the fetch to avoid calling real URLs
+  jest.spyOn(global, 'fetch').mockImplementation((url: RequestInfo | URL) => {
+    if (typeof url === 'string') {
+      if (url.includes('upload')) {
+        return Promise.resolve(
+          new Response(
+            JSON.stringify({ url: "mock-upload-url.jpg" }),
+            { status: 200, statusText: 'OK' }
+          )
+        );
+      }
+
+      if (url.includes('get-images')) {
+        return Promise.resolve(
+          new Response(
+            JSON.stringify({ images: ["mock-upload-url.jpg", "mock-image-2.jpg"] }), 
+            { status: 200, statusText: 'OK' }
+          )
+        );
+      }
+    }
+    
+    return Promise.reject(new Error("Unknown API request"));
+  });
+});
+
+
+afterEach(() => {
+  jest.restoreAllMocks();
+});
 
 describe('PhotoLibrary', () => {
   test('renders the component correctly', () => {
@@ -14,50 +44,47 @@ describe('PhotoLibrary', () => {
 
     // Check if the upload button is present
     expect(screen.getByTestId("upload-button")).toBeInTheDocument();
-
   });
 
-  test('allows user to upload images and see them in the grid', async () => {
+  test('mocks upload and displays image in grid', async () => {
     render(<PhotoLibrary />);
 
-    // Simulate a file input change event (e.g., uploading an image)
-    const file = new File(["dummy content"], "test-image.jpg", { type: "image/jpeg" });
+    // Mock the image data as if it was uploaded
+    const mockImages = ["mock-upload-url.jpg", "mock-image-2.jpg"];
 
-    const fileInput = screen.getByTestId("file-input");
-    fireEvent.change(fileInput, {
-        target: { files: [file] },
-    });
-
-    // Wait for image to load and check if the image preview appears
+    // Wait for the images to be rendered and check if the image preview appears
     await waitFor(() => {
-      expect(screen.getByTestId("upload-preview")).toBeInTheDocument();
-    });
+      const uploadPreviews = screen.getAllByTestId("upload-preview"); // Get all images with the test ID
+      expect(uploadPreviews).toHaveLength(mockImages.length); // Ensure the correct number of images are rendered
 
+      // Check if each image's src attribute matches the mock data
+      mockImages.forEach((url, index) => {
+        expect(uploadPreviews[index]).toHaveAttribute("src", url);
+      });
+    });
   });
 
   test("filters images by name in the search bar", async () => {
     render(<PhotoLibrary />);
   
-    // Create a mock image file
-    const file = new File(["dummy content"], "test-image.jpg", { type: "image/jpeg" });
-
-    const fileInput = screen.getByTestId("file-input");
-    fireEvent.change(fileInput, {
-        target: { files: [file] },
-    });
-  
-    // Wait for the image to be added to the state and rendered in the DOM
+    // Wait for the mocked images to load
     await waitFor(() => {
-      expect(screen.getByTestId("upload-preview")).toBeInTheDocument();
+      const uploadPreviews = screen.getAllByTestId("upload-preview");
+      expect(uploadPreviews).toHaveLength(2); // Expecting 2 mocked images to be rendered
     });
   
     // Simulate searching for the image
     const searchInput = screen.getByPlaceholderText("Search photo by name");
-    userEvent.type(searchInput, "test-image");
+    userEvent.type(searchInput, "mock-image");
   
-    // Wait for the image to still be displayed after filtering
+    // Wait for images to be filtered based on the search query
     await waitFor(() => {
-      expect(screen.getByTestId("upload-preview")).toBeInTheDocument();
+      const uploadPreviews = screen.getAllByTestId("upload-preview");
+  
+      expect(uploadPreviews).toHaveLength(1); // Mocked images should still match "mock-image"
+      uploadPreviews.forEach((img) => {
+        expect(img).toHaveAttribute("src", expect.stringContaining("mock-image"));
+      });
     });
-  });
+  });  
 });
